@@ -33,23 +33,24 @@ object KeyAlgorithm {
    * @return
    */
   def matchKeyWithAlgo(algorithm: KeyAlgorithm, hexAccountKey: String): Boolean = {
-
+    assert(hexAccountKey != null)
     (hexAccountKey == null || hexAccountKey.length < 2) match {
       case true => false
       case false => algorithm == KeyAlgorithm.ED25519 && hexAccountKey.substring(0, 2) == "01" || algorithm == KeyAlgorithm.SECP256K1 && hexAccountKey.substring(0, 2) == "02"
-        }
+    }
   }
+
   /**
    * get KeyAlgorithm from an id
    *
    * @param id
    * @return
    */
-  def fromId(id: Char): KeyAlgorithm = {
-    id match {
-      case 1 | '1' => ED25519
-      case 2 | '2' => SECP256K1
-      case _ => throw new IllegalArgumentException("Unknown algorithm Id " + id)
+  def fromId(id: Int): Option[KeyAlgorithm] = {
+
+    KeyAlgorithm.values.find(_.bits == id) match {
+      case Some(a) => Some(a)
+      case _ => None //throw new IllegalArgumentException("CLPublicKey : Unknown algorithm Id " + id)
     }
   }
 }

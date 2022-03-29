@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.{DeserializationFeature, SerializationFeature}
 import com.fasterxml.jackson.module.scala.{ClassTagExtensions, DefaultScalaModule, JavaTypeable}
 
-import java.io.{IOException, InputStream, OutputStream}
 import scala.reflect.ClassTag
+import scala.util.{Try, Success, Failure}
 
 /**
  * JsonConverter Utility Object
@@ -26,71 +26,44 @@ object JsonConverter {
 
 
   /**
-   * convert a capser type to json
+   * Deserialize into a List of T
+   * @param json
+   * @tparam T : Casper generic type
+   * @return List[T]
+   */
+  def toList[T: ClassTag](json: String): List[T] = mapper.readValue(json)
+
+  /**
+   * convert a casper type to json
    *
    * @param a
    * @tparam A
-   * @return
+   * @return Option[String]
    */
-  def toJson[T](t: T): String =   mapper.writer(prettyPrinter).writeValueAsString(t)
-
-  /**
-   *
-   * @param json
-   * @param m
-   * @tparam V
-   * @return
-   */
-  def toMap[V](json: String)(implicit m: JavaTypeable[V]): Map[String, V] = fromJson[Map[String, V]](json)
-
-
-
-  /**
-   *
-   * @param json
-   * @param m
-   * @tparam V
-   * @return
-   */
-  def toList[V : ClassTag](json: String): List[V] =
-    mapper.readValue(json)
+  def toJson[T](t: T): Option[String] = Try {
+    mapper.writer(prettyPrinter).writeValueAsString(t)
+  } match {
+    case Success(x) => Some(x)
+    case Failure(err) => {
+      print("Json serialization failed due to $err")
+      None
+    }
+  }
 
   /**
    * Convert a json string into a Casper type
    *
    * @param json
-   * @tparam A
-   * @return
+   * @tparam T :casper type
+   * @return : Option[T]
    */
-  def fromJson[T: ClassTag](json: String): T = {
+  def fromJson[T: ClassTag](json: String): Option[T] = Try {
     mapper.readValue(json, implicitly[ClassTag[T]].runtimeClass.asInstanceOf[Class[T]])
-  }
-
-  /**
-   * Writes a Casper type object to an  OutputStream
-   *
-   * @param clObject
-   * @param out
-   * @throws
-   */
-  @throws[IOException]
-  def toJson[T: ClassTag](t: T, out: OutputStream): Unit = {
-    mapper.writer(prettyPrinter).writeValue(out, t)
-    out.close()
-  }
-
-  /**
-   * Parses JSON from an inputstream into a casper type object
-   *
-   * @param in
-   * @param t
-   * @tparam T
-   * @throws IOException
-   * @return T
-   */
-
-  @throws[IOException]
-  def fromJson[T: ClassTag](in: InputStream, t: T): T = {
-    mapper.reader.readValue[T](in)
+  } match {
+    case Success(x) => Some(x)
+    case Failure(err) => {
+      print("Json Deserialization failed due to $err")
+      None
+    }
   }
 }

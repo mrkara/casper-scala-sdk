@@ -1,11 +1,21 @@
 package com.casper.sdk.domain.deploy
 
-case class StoredVersionedContractByHash (
-                                      hash:String,
-                                      version:Option[Int],
-                                      entry_point:String,
-                                      override  val args: Seq[Seq[DeployNamedArg]]
-                                    )  extends DeployExecutable(args) {
+import com.casper.sdk.crypto.hash.Hash
 
-  def tag=3
+/**
+ * StoredVersionedContractByHash entity object
+ *
+ * @param hash
+ * @param version
+ * @param entry_point
+ * @param args
+ */
+case class StoredVersionedContractByHash(
+                                          hash: Option[Hash],
+                                          version: Option[Int],
+                                          entry_point: String,
+                                          override val args: Seq[Seq[DeployNamedArg]]
+                                        ) extends DeployExecutable(args) {
+
+  override def tag = 3
 }

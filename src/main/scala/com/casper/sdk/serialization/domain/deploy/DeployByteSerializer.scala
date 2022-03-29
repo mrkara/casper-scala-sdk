@@ -13,15 +13,16 @@ import scala.collection.mutable.ArrayBuilder
 class DeployByteSerializer extends BytesSerializable[Deploy] {
 
   def toBytes(value: Deploy): Array[Byte] = {
-    assert(value != null)
+    require(value != null)
     val builder = new ArrayBuilder.ofByte
     val deployExecutableByteSerializer = new DeployExecutableByteSerializer()
     val approvalByteSerializer = new DeployApprovalByteSerializer()
     val deployHeaderByteSerializer = new DeployHeaderByteSerializer()
 
     builder.addAll(deployHeaderByteSerializer.toBytes(value.header))
-      .addAll(HexUtils.fromHex(value.hash))
-      .addAll(deployExecutableByteSerializer.toBytes(value.payment))
+    if (value.hash.isDefined)
+      builder.addAll(value.hash.get.hash)
+    builder.addAll(deployExecutableByteSerializer.toBytes(value.payment))
       .addAll(deployExecutableByteSerializer.toBytes(value.session))
       .addAll(CLValue.U32(value.approvals.size).bytes)
     for (approuval <- value.approvals) builder.addAll(approvalByteSerializer.toBytes(approuval))

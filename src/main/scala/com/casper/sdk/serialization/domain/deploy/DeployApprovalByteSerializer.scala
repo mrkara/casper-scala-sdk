@@ -11,8 +11,12 @@ import scala.collection.mutable.ArrayBuilder
 class DeployApprovalByteSerializer extends BytesSerializable[DeployApproval] {
 
   def toBytes(value: DeployApproval): Array[Byte] = {
-    assert(value != null)
+    require(value != null)
     val builder = new ArrayBuilder.ofByte
-    builder.addAll(value.signer.formatAsByteAccount).addAll(value.signature.formatAsByteAccount).result()
+    //signer and signature are both set or not
+    if (value.signature.isDefined && value.signer.isDefined)
+      builder.addAll(value.signer.get.formatAsByteAccount).addAll(value.signature.get.formatAsByteAccount).result()
+    else
+      builder.result()
   }
 }

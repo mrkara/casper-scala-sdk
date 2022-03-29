@@ -1,19 +1,22 @@
 name := "casper-scala-sdk"
 
-version := "1.0.1"
+version := "1.2.1"
 
 scalaVersion := "3.0.2"
-//scalaVersion := "2.13.7"
 
 //scalaTest framework
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.10"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.10" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest-funspec" % "3.2.10" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest-flatspec" % "3.2.10" % "test"
 
 //fasterXml library
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.13.0"
 
 //bouncycastle crypto library
-libraryDependencies += "org.bouncycastle" % "bcprov-jdk15on" % "1.66"
+libraryDependencies += "org.bouncycastle" % "bcprov-jdk15on" % "1.69"
+libraryDependencies += "org.bouncycastle" % "bcpkix-jdk15on" % "1.69"
+libraryDependencies += "org.bouncycastle" % "bcprov-ext-jdk15on" % "1.69"
 
 //scala cats library
 libraryDependencies += "org.typelevel" %% "cats-core" % "2.6.1"
@@ -22,14 +25,16 @@ libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.13.6"
 //OkHttp3 library
 libraryDependencies += "com.squareup.okhttp3" % "okhttp" % "4.9.2"
 
-libraryDependencies += "org.scodec" %% "scodec-bits" % "1.1.29"
-
+//apache codec library
 libraryDependencies += "commons-codec" % "commons-codec" % "1.15"
+
+libraryDependencies += "com.rfksystems" % "blake2b" % "1.0.0"
 
 
 
 //publish
 /*
+
 ThisBuild / organization := "io.caspercommunity"
 ThisBuild / organizationName := "caspercommunity"
 ThisBuild / organizationHomepage := Some(url("https://caspercommunity.io/"))
@@ -58,8 +63,6 @@ ThisBuild / pomIncludeRepository := { _ => false }
 
 sonatypeCredentialHost := "s01.oss.sonatype.org"
 sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
-
-
 
 ThisBuild / publishTo := {
   val nexus = "https://s01.oss.sonatype.org/"

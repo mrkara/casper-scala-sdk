@@ -1,10 +1,19 @@
 package com.casper.sdk.domain.deploy
 
+import com.casper.sdk.crypto.hash.Hash
+
+/**
+ * StoredContractByHash entity object
+ *
+ * @param hash
+ * @param entry_point
+ * @param args
+ */
 case class StoredContractByHash(
-                                 hash:String,
+                                 hash:Option[Hash],
                                  entry_point:String,
-                                 override  val args: Seq[Seq[DeployNamedArg]]
+                                 override val args: Seq[Seq[DeployNamedArg]]
                                )  extends DeployExecutable(args) {
 
-  def tag=1
+  override def tag=1
 }
